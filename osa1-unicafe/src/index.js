@@ -8,16 +8,22 @@ const Header = ({ name }) => {
 }
 
 const Statistics = ({ state }) => {
-  return(
-    <div>
-      < DisplayVotes option={"hyvä"} votes={state.hyva} />
-      < DisplayVotes option={"neutraali"} votes={state.neutraali} />
-      < DisplayVotes option={"huono"} votes={state.huono} />
+  if (Object.values(state).every( x => x === 0 )) {
+    return(<p>ei yhtään palautetta annettu</p>)
+  }
 
-      < DisplayAverage state={state} />
-      < DisplayPositive state={state} />
-    </div>
-  )
+  else {
+    return(
+      <div>
+        < DisplayVotes option={"hyvä"} votes={state.hyva} />
+        < DisplayVotes option={"neutraali"} votes={state.neutraali} />
+        < DisplayVotes option={"huono"} votes={state.huono} />
+
+        < DisplayAverage state={state} />
+        < DisplayPositive state={state} />
+      </div>
+    )
+  }
 }
 
 const DisplayVotes = ({ option, votes }) => {
@@ -42,6 +48,12 @@ const DisplayPositive = ({state}) => {
   )
 }
 
+const Button = ({ option, state, buttonClick }) => {
+  return(
+    <button onClick={buttonClick(option, state[option]+1)}> {option} </button>
+  )
+}
+
 class App extends React.Component {
   constructor() {
     super()
@@ -60,9 +72,9 @@ class App extends React.Component {
     return (
       <div>
         < Header name={"Anna palautetta"}/>
-        <button onClick={voteOption("hyva", this.state.hyva+1)}>hyvä</button>
-        <button onClick={voteOption("neutraali", this.state.neutraali+1)}>neutraali</button>
-        <button onClick={voteOption("huono", this.state.huono+1)}>huono</button>
+        < Button option={"hyva"} state={this.state} buttonClick={voteOption} />
+        < Button option={"neutraali"} state={this.state} buttonClick={voteOption} />
+        < Button option={"huono"} state={this.state} buttonClick={voteOption} />
 
         < Header name={"Statistiikka"}/>
         < Statistics state={this.state}/>
